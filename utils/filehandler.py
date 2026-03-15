@@ -306,13 +306,13 @@ def clear_all_history():
     """Clear all history"""
     save_history([])
 
-def add_to_history(file_name, analysis_history):
+def add_to_history(file_name, analysis_history, df=None):
     """Add file to analysis history (legacy function)"""
     history_record = {
         'filename': file_name,
         'timestamp': time.strftime("%Y-%m-%d %H:%M:%S"),
-        'rows': len(df) if 'df' in locals() else 0,
-        'columns': len(df.columns) if 'df' in locals() else 0
+        'rows': len(df) if df is not None else 0,
+        'columns': len(df.columns) if df is not None else 0
     }
     
     if not any(h['filename'] == file_name for h in analysis_history):
