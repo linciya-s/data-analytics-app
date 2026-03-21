@@ -8,13 +8,16 @@ import PyPDF2
 from io import BytesIO
 import time
 from datetime import datetime
-import matplotlib.pyplot as plt
-from reportlab.lib.pagesizes import letter
-from reportlab.lib import colors
-from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, PageBreak
-from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-from reportlab.lib.units import inch
-from reportlab.lib.enums import TA_CENTER, TA_LEFT
+try:
+    from reportlab.lib.pagesizes import letter
+    from reportlab.lib import colors
+    from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, PageBreak
+    from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+    from reportlab.lib.units import inch
+    from reportlab.lib.enums import TA_CENTER, TA_LEFT
+    REPORTLAB_AVAILABLE = True
+except ModuleNotFoundError:
+    REPORTLAB_AVAILABLE = False
 import json
 from pathlib import Path
 
@@ -123,6 +126,9 @@ def export_matplotlib_to_pdf(fig):
 
 def generate_analysis_report_pdf(df, file_name, numeric_cols):
     """Generate comprehensive PDF analysis report"""
+    if not REPORTLAB_AVAILABLE:
+        st.error("reportlab not installed; PDF report generation unavailable.")
+        return None
     try:
         pdf_buffer = BytesIO()
         doc = SimpleDocTemplate(pdf_buffer, pagesize=letter,
