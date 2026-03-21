@@ -676,69 +676,7 @@ if uploaded_file is not None:
                 st.info("No categorical columns found for pie chart. Please upload a file with categorical data.")
         
         # ---- BONUS: BUBBLE CHART ----
-        st.markdown("---")
-        st.subheader("🫧 Bonus: Bubble Chart - Multi-dimensional Analysis")
-        st.write("Visualize up to 4 dimensions in a single chart")
         
-        if len(numeric_cols) >= 3:
-            col1, col2, col3, col4 = st.columns(4)
-            with col1:
-                x_bubble = st.selectbox("X-axis (numeric)", numeric_cols, key="bubble_x")
-            with col2:
-                y_bubble = st.selectbox("Y-axis (numeric)", numeric_cols, index=1 if len(numeric_cols) > 1 else 0, key="bubble_y")
-            with col3:
-                size_bubble = st.selectbox("Bubble Size (numeric)", numeric_cols, index=2 if len(numeric_cols) > 2 else 0, key="bubble_size")
-            with col4:
-                color_bubble = None
-                if categorical_cols:
-                    color_bubble = st.selectbox("Color by (category)", ['None'] + categorical_cols, key="bubble_color")
-                    if color_bubble == 'None':
-                        color_bubble = None
-            
-            # Build bubble chart with optional trendline
-            bubble_params = {
-                "x": x_bubble,
-                "y": y_bubble,
-                "size": size_bubble,
-                "title": f"🫧 Bubble Chart: {x_bubble} vs {y_bubble} (size: {size_bubble})"
-            }
-            
-            if color_bubble:
-                bubble_params["color"] = color_bubble
-            
-            if st.checkbox("Show Trendline", key="bubble_trend"):
-                bubble_params["trendline"] = "ols"
-            
-            fig_bubble = px.scatter(df, **bubble_params)
-            fig_bubble.update_layout(
-                template="plotly_white",
-                height=500,
-                font=dict(family="Arial, sans-serif", size=12),
-                title_font_size=18,
-                hovermode="closest",
-                plot_bgcolor='rgba(0,0,0,0.02)',
-                xaxis_title=x_bubble,
-                yaxis_title=y_bubble
-            )
-            fig_bubble.update_traces(marker=dict(sizemode='diameter', sizeref=2.*max(df[size_bubble])/(50**2), sizemin=4, opacity=0.6))
-            st.plotly_chart(fig_bubble, use_container_width=True)
-            
-            col1, col2, col3 = st.columns([2, 1, 1])
-            with col3:
-                try:
-                    img_bytes = fig_bubble.to_image(format="png")
-                    st.download_button(
-                        label="📥 Download PNG",
-                        data=img_bytes,
-                        file_name=f"bubble_{x_bubble}_vs_{y_bubble}.png",
-                        mime="image/png",
-                        key="bubble_png"
-                    )
-                except:
-                    pass
-        else:
-            st.info("Need at least 3 numeric columns for bubble chart")
-    
     # ---- TAB 3: DATA QUALITY ----
     with tab3:
         st.header("Data Quality Report")
